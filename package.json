@@ -5,5 +5,8 @@
   "repository": "git@github.com:NatanCastro/imobiliaria-backend.git",
   "author": "NatanCastro <castro.natan@outlook.com>",
   "license": "MIT",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "prettier": "^2.8.8"
+  }
 }
