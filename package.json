@@ -1,0 +1,9 @@
+{
+  "name": "imobiliaria-backend",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:NatanCastro/imobiliaria-backend.git",
+  "author": "NatanCastro <castro.natan@outlook.com>",
+  "license": "MIT",
+  "private": true
+}
