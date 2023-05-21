@@ -1,0 +1,22 @@
+version: '3.4'
+
+services:
+  database:
+    # this is only development, cannot be used in production
+    image: postgresql
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: pass123
+      MYSQL_DATABASE: imobdb
+    volumes:
+      - database_data:/var/lib/mysql
+    healthcheck:
+      test: ['CMD', 'mysqladmin', 'ping', '--silent']
+      interval: 1s
+      timeout: 3s
+      retries: 30
+    ports:
+      - 3306:3306
+
+volumes:
+  database_data:
