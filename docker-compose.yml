@@ -3,10 +3,11 @@ version: '3.4'
 services:
   database:
     # this is only development, cannot be used in production
-    image: postgresql
+    image: mysql
+    container_name: imobiliaria_db
     command: --default-authentication-plugin=mysql_native_password
     environment:
-      MYSQL_ROOT_PASSWORD: pass123
+      MYSQL_ALLOW_EMPTY_PASSWORD: true
       MYSQL_DATABASE: imobdb
     volumes:
       - database_data:/var/lib/mysql
