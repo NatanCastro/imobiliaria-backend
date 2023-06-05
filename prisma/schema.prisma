@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["views"]
 }
 
 datasource db {
@@ -11,13 +12,37 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
-  name     String
-  password String
-  role     Role
+  id         String       @id @default(uuid())
+  name       String
+  password   String
+  role       Role
+  UserImovel UserImovel[]
 }
 
 enum Role {
   costumer
   admin
+}
+
+model UserImovel {
+  userId   String
+  user     User   @relation(fields: [userId], references: [id])
+  imovelId String
+  imovel   Imovel @relation(fields: [imovelId], references: [id])
+
+  @@id([userId])
+}
+
+model Imovel {
+  id             String       @id @default(uuid())
+  name           String       @db.VarChar(100)
+  description    String       @db.MediumText
+  bedroomNumber  Int          @db.UnsignedInt
+  suiteNumber    Int          @db.UnsignedInt
+  bathroomNumber Int          @db.UnsignedInt
+  city           String
+  district       String
+  street         String
+  number         String
+  UserImovel     UserImovel[]
 }
