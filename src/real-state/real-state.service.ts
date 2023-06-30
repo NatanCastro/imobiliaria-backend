@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { CreateRealStateDto } from './dto/create-real-state.dto'
 import { UpdateRealStateDto } from './dto/update-real-state.dto'
-import { FindRealState } from './dto/find-real-state.dto'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { Prisma } from '@prisma/client'
 
