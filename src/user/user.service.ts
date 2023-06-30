@@ -6,6 +6,7 @@ import { findUser } from './types'
 import { UpdateUserPasswordDto } from './dto/update-user-password.dto'
 import { EncryptService } from 'src/encrypt/encrypt.service'
 import { ReturnUserDto } from './dto/return-user.dto'
+import { randomUUID } from 'crypto'
 
 @Injectable()
 export class UserService {
@@ -24,6 +25,7 @@ export class UserService {
 
     const user: User = await this.prisma.user.create({
       data: {
+        id: randomUUID(),
         name,
         role,
         password: encrypetedPassword
