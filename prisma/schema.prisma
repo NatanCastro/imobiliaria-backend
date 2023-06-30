@@ -1,49 +1,38 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["views"]
-  relationMode = "prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id         String       @id @default(uuid())
-  name       String
-  password   String
-  role       Role
-  UserImovel UserImovel[]
+  name     String
+  password String
+  role     Role
+  id       String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+}
+
+model RealState {
+  name           String  @db.VarChar(100)
+  description    String
+  bedroomNumber  Int
+  bathroomNumber Int
+  parkingSpace   Int
+  area           Int
+  city           String
+  district       String
+  street         String
+  number         String
+  rentValue      Float?
+  purchaseValue  Float?
+  swimmingpool   Boolean @default(false)
+  condominium    Boolean @default(false)
+  id             String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 }
 
 enum Role {
   costumer
   admin
-}
-
-model UserImovel {
-  userId   String
-  user     User   @relation(fields: [userId], references: [id])
-  imovelId String
-  imovel   Imovel @relation(fields: [imovelId], references: [id])
-
-  @@id([userId])
-}
-
-model Imovel {
-  id             String       @id @default(uuid())
-  name           String       @db.VarChar(100)
-  description    String       @db.MediumText
-  bedroomNumber  Int          @db.UnsignedInt
-  suiteNumber    Int          @db.UnsignedInt
-  bathroomNumber Int          @db.UnsignedInt
-  city           String
-  district       String
-  street         String
-  number         String
-  UserImovel     UserImovel[]
 }
