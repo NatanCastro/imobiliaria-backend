@@ -32,37 +32,33 @@ export class RealStateController {
       bathroomNumber
     } = findRealState
     return this.realStateService.find({
-      take: Number(take) || undefined,
-      skip: Number(skip) || undefined,
+      take: take,
+      skip: skip,
       where: {
-        city: city
-          ? {
-              equals: city
-            }
-          : undefined,
-        district: district
-          ? {
-              equals: district
-            }
-          : undefined,
+        city: {
+          equals: city
+        },
+        district: {
+          equals: district
+        },
         area: {
-          gte: Number(minArea) || undefined,
-          lte: Number(maxArea) || undefined
+          gte: minArea,
+          lte: maxArea
         },
         bedroomNumber: {
-          gte: Number(bedroomNumber) || undefined
+          gte: bedroomNumber
         },
         bathroomNumber: {
-          gte: Number(bathroomNumber) || undefined
+          gte: bathroomNumber
         },
         purchaseValue: {
-          gte: Number(minPValue) || undefined,
-          lte: Number(maxPValue) || undefined,
+          gte: minPValue,
+          lte: maxPValue,
           not: notPValue
         },
         rentValue: {
-          gte: Number(minRValue) || undefined,
-          lte: Number(maxRValue) || undefined,
+          gte: minRValue,
+          lte: maxRValue,
           not: notRValue
         }
       }
