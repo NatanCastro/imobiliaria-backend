@@ -1,14 +1,16 @@
-version: '3.9'
+version: '3.1'
 
 services:
-  database:
-    image: postgres:alpine
-    container_name: imobiliaria_postgres
+  db:
+    image: mysql:debian
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
     environment:
-      POSTGRES_USER: dev
-      POSTGRES_PASSWORD: dev
-      POSTGRES_DB: imobdb
-    volumes:
-      - .data/:/var/lib/postgresql/data
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: imobdb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: user
     ports:
-      - 5430:5432
+      - 3306:3306
+    volumes:
+      - .data/:/var/lib/mysql
