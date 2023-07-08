@@ -3,10 +3,11 @@ import { CreateRealStateDto } from './dto/create-real-state.dto'
 import { UpdateRealStateDto } from './dto/update-real-state.dto'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { Prisma } from '@prisma/client'
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service'
 
 @Injectable()
 export class RealStateService {
-  constructor(private prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService, private readonly cloudinaryService: CloudinaryService) {}
 
   async create({
     city,
@@ -43,6 +44,16 @@ export class RealStateService {
       }
     })
     return realState
+  }
+
+  async uploadImages(files: Express.Multer.File[]) {
+    const uploadedImages = await Promise.all(
+      files.map(async (file) => {
+        const { public_id, secure_url } = await this.cloudinaryService.uploadToCloudinary(file)
+        return { public_id, secure_url }
+      })
+    )
+    return uploadedImages
   }
 
   async getCities() {

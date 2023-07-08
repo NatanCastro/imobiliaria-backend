@@ -1,8 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseUUIDPipe } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  ParseUUIDPipe,
+  UseInterceptors,
+  UploadedFiles
+} from '@nestjs/common'
 import { RealStateService } from './real-state.service'
 import { CreateRealStateDto } from './dto/create-real-state.dto'
 import { UpdateRealStateDto } from './dto/update-real-state.dto'
 import { FindRealState } from './dto/find-real-state.dto'
+import { FilesInterceptor } from '@nestjs/platform-express'
+import { diskStorage } from 'multer'
+import { unlink } from 'fs'
 
 @Controller('real-state')
 export class RealStateController {
@@ -11,6 +26,22 @@ export class RealStateController {
   @Post()
   create(@Body() createRealStateDto: CreateRealStateDto) {
     return this.realStateService.create(createRealStateDto)
+  }
+
+  @Post('upload-images')
+  @UseInterceptors(
+    FilesInterceptor('files', undefined, {
+      fileFilter: (_req, file, cb) => {
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif|webp)$/)) {
+          return cb(null, false)
+        }
+        cb(null, true)
+      }
+    })
+  )
+  async uploadImages(@UploadedFiles() files: Array<Express.Multer.File>) {
+    const images = await this.realStateService.uploadImages(files)
+    return images
   }
 
   @Get()
