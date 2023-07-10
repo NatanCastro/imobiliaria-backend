@@ -1,6 +1,7 @@
 import { OmitType, PartialType } from '@nestjs/mapped-types'
 import { RealState } from '../entities/real-state.entity'
 import { IsArray, IsBoolean, IsNumber, IsOptional, IsString, Min } from 'class-validator'
+import { Transform, Type } from 'class-transformer'
 
 export class CreateRealStateDto extends OmitType(PartialType(RealState), ['id']) {
   @IsString()
@@ -35,9 +36,9 @@ export class CreateRealStateDto extends OmitType(PartialType(RealState), ['id'])
   purchaseValue?: number
   @IsOptional()
   @IsArray()
-  images: string[]
-  @IsBoolean()
+  images: { cloudId: string; url: string }[]
+  @Type(() => Boolean)
   condominium: boolean
-  @IsBoolean()
+  @Type(() => Boolean)
   swimmingpool: boolean
 }

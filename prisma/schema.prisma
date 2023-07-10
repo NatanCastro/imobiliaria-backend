@@ -16,7 +16,7 @@ model User {
 
 model RealState {
   name           String  @db.VarChar(100)
-  description    String @db.LongText
+  description    String  @db.LongText
   bedroomNumber  Int
   bathroomNumber Int
   parkingSpace   Int
@@ -30,9 +30,18 @@ model RealState {
   swimmingpool   Boolean @default(false)
   condominium    Boolean @default(false)
   id             String  @id @default(uuid())
+  Image          Image[]
 }
 
 enum Role {
   costumer
   admin
+}
+
+model Image {
+  id          String    @id @default(uuid())
+  cloudId     String
+  url         String
+  realState   RealState @relation(fields: [realStateId], references: [id])
+  realStateId String
 }

@@ -23,7 +23,8 @@ export class RealStateService {
     district,
     bedroomNumber,
     rentValue,
-    purchaseValue
+    purchaseValue,
+    images
   }: CreateRealStateDto) {
     const realState = await this.prismaService.realState.create({
       data: {
@@ -40,7 +41,12 @@ export class RealStateService {
         bathroomNumber,
         swimmingpool,
         condominium,
-        parkingSpace
+        parkingSpace,
+        Image: {
+          createMany: {
+            data: images
+          }
+        }
       }
     })
     return realState
@@ -77,12 +83,32 @@ export class RealStateService {
     where?: Prisma.RealStateWhereInput
     orderBy?: Prisma.RealStateOrderByWithRelationInput
   }) {
-    const realStates = await this.prismaService.realState.findMany(findRealState)
+    const realStates = await this.prismaService.realState.findMany({
+      ...findRealState,
+      include: {
+        Image: {
+          select: {
+            url: true,
+            cloudId: true
+          }
+        }
+      }
+    })
     return realStates
   }
 
   async findOne(id: string) {
-    const realState = await this.prismaService.realState.findUnique({ where: { id } })
+    const realState = await this.prismaService.realState.findUnique({
+      where: { id },
+      include: {
+        Image: {
+          select: {
+            cloudId: true,
+            url: true
+          }
+        }
+      }
+    })
     return realState
   }
 
