@@ -15,7 +15,10 @@ export class CloudinaryService {
       folder: 'imobiliaria-imoveis',
       format: 'webp',
       transformation: {
-        quality: 'auto'
+        quality: 'auto',
+        aspect_ratio: '16:9',
+        gravity: 'auto',
+        crop: 'fill'
       }
     })
     return response
