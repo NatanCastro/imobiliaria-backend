@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model User {
@@ -44,4 +45,6 @@ model Image {
   url         String
   realState   RealState @relation(fields: [realStateId], references: [id])
   realStateId String
+
+  @@index([realStateId])
 }
