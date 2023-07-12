@@ -118,7 +118,11 @@ export class RealStateService {
   }
 
   async remove(id: string) {
-    const realState = await this.prismaService.realState.delete({ where: { id } })
+    const realState = await this.prismaService.realState.delete({
+      where: { id },
+      include: { Image: { select: { cloudId: true } } }
+    })
+    realState.Image.forEach((i) => this.cloudinaryService.deleteFromCloudinary(i.cloudId))
     return realState
   }
 }
