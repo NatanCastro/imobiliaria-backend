@@ -8,13 +8,6 @@ datasource db {
   relationMode = "prisma"
 }
 
-model User {
-  name     String
-  password String
-  role     Role
-  id       String @id @default(uuid())
-}
-
 model RealState {
   name           String  @db.VarChar(100)
   description    String  @db.LongText
@@ -32,11 +25,6 @@ model RealState {
   condominium    Boolean @default(false)
   id             String  @id @default(uuid())
   Image          Image[]
-}
-
-enum Role {
-  costumer
-  admin
 }
 
 model Image {
