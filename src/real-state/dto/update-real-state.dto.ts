@@ -28,6 +28,10 @@ export class UpdateRealStateDto extends PartialType(CreateRealStateDto) {
   @IsOptional()
   @IsNumber()
   @Min(0)
+  suiteNumber: number
+  @IsOptional()
+  @IsNumber()
+  @Min(0)
   bathroomNumber: number
   @IsOptional()
   @IsNumber()

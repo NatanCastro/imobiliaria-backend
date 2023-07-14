@@ -16,8 +16,6 @@ import { CreateRealStateDto } from './dto/create-real-state.dto'
 import { UpdateRealStateDto } from './dto/update-real-state.dto'
 import { FindRealState } from './dto/find-real-state.dto'
 import { FilesInterceptor } from '@nestjs/platform-express'
-import { diskStorage } from 'multer'
-import { unlink } from 'fs'
 
 @Controller('real-state')
 export class RealStateController {

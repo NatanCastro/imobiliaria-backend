@@ -22,6 +22,7 @@ export class RealStateService {
     street,
     district,
     bedroomNumber,
+    suiteNumber,
     rentValue,
     purchaseValue,
     images
@@ -39,6 +40,7 @@ export class RealStateService {
         number,
         area,
         bathroomNumber,
+        suiteNumber,
         swimmingpool,
         condominium,
         parkingSpace,

@@ -4,6 +4,7 @@ export class RealState implements PrismaRealState {
   name: string
   description: string
   bedroomNumber: number
+  suiteNumber: number
   bathroomNumber: number
   parkingSpace: number
   area: number
