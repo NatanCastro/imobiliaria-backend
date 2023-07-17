@@ -7,7 +7,10 @@ import { CloudinaryService } from 'src/cloudinary/cloudinary.service'
 
 @Injectable()
 export class RealStateService {
-  constructor(private readonly prismaService: PrismaService, private readonly cloudinaryService: CloudinaryService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly cloudinaryService: CloudinaryService
+  ) {}
 
   async create({
     city,
