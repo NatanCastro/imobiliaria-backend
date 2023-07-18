@@ -13,6 +13,8 @@ export class CreateRealStateDto extends OmitType(PartialType(RealState), ['id'])
   @IsString()
   street: string
   @IsString()
+  state: string
+  @IsString()
   city: string
   @IsString()
   district: string

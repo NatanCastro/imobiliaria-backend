@@ -13,6 +13,7 @@ export class RealStateService {
   ) {}
 
   async create({
+    state,
     city,
     description,
     name,
@@ -34,6 +35,7 @@ export class RealStateService {
       data: {
         name,
         description,
+        state,
         city,
         purchaseValue,
         rentValue,

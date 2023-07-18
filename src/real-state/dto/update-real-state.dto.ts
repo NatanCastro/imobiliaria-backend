@@ -17,6 +17,9 @@ export class UpdateRealStateDto extends PartialType(CreateRealStateDto) {
   street?: string
   @IsOptional()
   @IsString()
+  state?: string
+  @IsOptional()
+  @IsString()
   city?: string
   @IsOptional()
   @IsString()

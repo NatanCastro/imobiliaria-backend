@@ -17,6 +17,7 @@ model RealState {
   bathroomNumber Int
   parkingSpace   Int
   area           Int
+  state String
   city           String
   district       String
   street         String

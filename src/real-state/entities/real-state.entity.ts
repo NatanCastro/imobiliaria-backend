@@ -8,6 +8,7 @@ export class RealState implements PrismaRealState {
   bathroomNumber: number
   parkingSpace: number
   area: number
+  state: string
   city: string
   district: string
   street: string
