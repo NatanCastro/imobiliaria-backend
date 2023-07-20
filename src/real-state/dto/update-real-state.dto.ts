@@ -1,6 +1,7 @@
 import { PartialType } from '@nestjs/mapped-types'
 import { CreateRealStateDto } from './create-real-state.dto'
-import { IsBoolean, IsNumber, IsOptional, IsString, Min } from 'class-validator'
+import { IsNumber, IsOptional, IsString, Min } from 'class-validator'
+import { Type } from 'class-transformer'
 
 export class UpdateRealStateDto extends PartialType(CreateRealStateDto) {
   @IsOptional()
@@ -49,8 +50,8 @@ export class UpdateRealStateDto extends PartialType(CreateRealStateDto) {
   @IsOptional()
   @IsNumber()
   purchaseValue?: number
-  @IsBoolean()
+  @Type(() => Boolean)
   condominium: boolean
-  @IsBoolean()
+  @Type(() => Boolean)
   swimmingpool: boolean
 }
