@@ -16,7 +16,6 @@ export class CloudinaryService {
       format: 'webp',
       transformation: {
         quality: 'auto',
-        aspect_ratio: '16:9',
         gravity: 'auto',
         crop: 'fill'
       }
