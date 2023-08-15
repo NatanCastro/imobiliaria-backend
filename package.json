@@ -34,6 +34,7 @@
     "morgan": "^1.10.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0",
+    "stripe": "^12.18.0",
     "webpack": "^5.88.2"
   },
   "devDependencies": {
