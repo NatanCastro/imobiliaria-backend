@@ -170,6 +170,7 @@ export class RealStateService {
       include: { Image: { select: { cloudId: true } } }
     })
     realState.Image.forEach((i) => this.cloudinaryService.deleteFromCloudinary(i.cloudId))
+    await this.stripeService.deleteProduct(id)
     return realState
   }
 }
