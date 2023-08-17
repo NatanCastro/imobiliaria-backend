@@ -31,6 +31,9 @@ export class StripeService {
   }
 
   async deleteProduct(id: string) {
-    await stripe.products.del(id)
+    stripe.products.update(id, {
+      active: false
+    })
+    // await stripe.products.del(id)
   }
 }
