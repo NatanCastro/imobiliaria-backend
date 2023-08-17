@@ -4,6 +4,7 @@ import { UpdateRealStateDto } from './dto/update-real-state.dto'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { Prisma } from '@prisma/client'
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service'
+import { stripe } from 'src/stripe/stripe'
 
 @Injectable()
 export class RealStateService {
@@ -54,8 +55,31 @@ export class RealStateService {
             data: images
           }
         }
+      },
+      include: {
+        Image: {
+          select: {
+            url: true
+          }
+        }
       }
     })
+    if (realState.rentValue) {
+      const rentUrl = await this.addToStripe({
+        id: realState.id,
+        name: realState.name,
+        price: realState.rentValue,
+        images: realState.Image.map((image) => image.url)
+      })
+      this.prismaService.realState.update({
+        where: {
+          id: realState.id
+        },
+        data: {
+          rentUrl
+        }
+      })
+    }
     return realState
   }
 
@@ -120,7 +144,22 @@ export class RealStateService {
   }
 
   async update(id: string, updateRealStateDto: UpdateRealStateDto) {
-    const realState = await this.prismaService.realState.update({ where: { id }, data: { ...updateRealStateDto } })
+    const realState = await this.prismaService.realState.update({
+      where: { id },
+      data: { ...updateRealStateDto },
+      include: {
+        Image: {
+          select: {
+            url: true
+          }
+        }
+      }
+    })
+    this.updateStripeInfo(id, {
+      name: realState.name,
+      images: realState.Image.map((image) => image.url),
+      price: realState.rentValue
+    })
     return realState
   }
 
@@ -131,5 +170,28 @@ export class RealStateService {
     })
     realState.Image.forEach((i) => this.cloudinaryService.deleteFromCloudinary(i.cloudId))
     return realState
+  }
+
+  async addToStripe({ id, name, price, images }: { id: string; name: string; price: number; images: string[] }) {
+    const stripeProduct = await stripe.products.create({
+      id: id,
+      name: name,
+      metadata: {
+        id: id
+      },
+      images: images,
+      default_price_data: {
+        currency: 'BRL',
+        unit_amount: price * 100,
+        recurring: {
+          interval: 'month'
+        }
+      }
+    })
+    return stripeProduct.url
+  }
+
+  async updateStripeInfo(id: string, { name, price, images }: { name: string; price: number; images: string[] }) {
+    await stripe.products.update(id, { name, default_price: price.toString(), images: images })
   }
 }
