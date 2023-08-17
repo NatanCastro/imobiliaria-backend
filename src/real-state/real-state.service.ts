@@ -4,13 +4,14 @@ import { UpdateRealStateDto } from './dto/update-real-state.dto'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { Prisma } from '@prisma/client'
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service'
-import { stripe } from 'src/stripe/stripe'
+import { StripeService } from 'src/stripe/stripe.service'
 
 @Injectable()
 export class RealStateService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly cloudinaryService: CloudinaryService
+    private readonly cloudinaryService: CloudinaryService,
+    private readonly stripeService: StripeService
   ) {}
 
   async create({
@@ -65,7 +66,7 @@ export class RealStateService {
       }
     })
     if (realState.rentValue) {
-      const rentUrl = await this.addToStripe({
+      const rentUrl = await this.stripeService.addProduct({
         id: realState.id,
         name: realState.name,
         price: realState.rentValue,
@@ -155,7 +156,7 @@ export class RealStateService {
         }
       }
     })
-    this.updateStripeInfo(id, {
+    this.stripeService.updateProduct(id, {
       name: realState.name,
       images: realState.Image.map((image) => image.url),
       price: realState.rentValue
@@ -170,28 +171,5 @@ export class RealStateService {
     })
     realState.Image.forEach((i) => this.cloudinaryService.deleteFromCloudinary(i.cloudId))
     return realState
-  }
-
-  async addToStripe({ id, name, price, images }: { id: string; name: string; price: number; images: string[] }) {
-    const stripeProduct = await stripe.products.create({
-      id: id,
-      name: name,
-      metadata: {
-        id: id
-      },
-      images: images,
-      default_price_data: {
-        currency: 'BRL',
-        unit_amount: price * 100,
-        recurring: {
-          interval: 'month'
-        }
-      }
-    })
-    return stripeProduct.url
-  }
-
-  async updateStripeInfo(id: string, { name, price, images }: { name: string; price: number; images: string[] }) {
-    await stripe.products.update(id, { name, default_price: price.toString(), images: images })
   }
 }
