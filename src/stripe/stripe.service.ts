@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { stripe } from './stripe'
+import Stripe from 'stripe'
 
 @Injectable()
 export class StripeService {
@@ -31,9 +32,22 @@ export class StripeService {
   }
 
   async deleteProduct(id: string) {
-    stripe.products.update(id, {
+    await stripe.products.update(id, {
       active: false
     })
     // await stripe.products.del(id)
+  }
+
+  async createPaymentLink(id: string) {
+    const product = await stripe.products.retrieve(id)
+    const { url } = await stripe.paymentLinks.create({
+      line_items: [
+        {
+          price: (product.default_price as Stripe.Price).id,
+          quantity: 1
+        }
+      ]
+    })
+    return url
   }
 }

@@ -66,12 +66,13 @@ export class RealStateService {
       }
     })
     if (realState.rentValue) {
-      const rentUrl = await this.stripeService.addProduct({
+      await this.stripeService.addProduct({
         id: realState.id,
         name: realState.name,
         price: realState.rentValue,
         images: realState.Image.map((image) => image.url)
       })
+      const rentUrl = await this.stripeService.createPaymentLink(realState.id)
       this.prismaService.realState.update({
         where: {
           id: realState.id
