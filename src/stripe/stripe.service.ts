@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
-import { stripe } from './stripe'
-import Stripe from 'stripe'
+import StripeClient from 'stripe'
 
 @Injectable()
 export class StripeService {
+  constructor(private readonly stripeClient: StripeClient) {}
+
   async addProduct({ id, name, price, images }: { id: string; name: string; price: number; images: string[] }) {
-    const stripeProduct = await stripe.products.create({
+    const stripeProduct = await this.stripeClient.products.create({
       id: id,
       name: name,
       metadata: {
@@ -24,7 +25,7 @@ export class StripeService {
   }
 
   async updateProduct(id: string, { name, price, images }: { name: string; price: number; images: string[] }) {
-    await stripe.products.update(id, {
+    await this.stripeClient.products.update(id, {
       name,
       default_price: (price * 100).toString(),
       images: images
@@ -32,18 +33,18 @@ export class StripeService {
   }
 
   async deleteProduct(id: string) {
-    await stripe.products.update(id, {
+    await this.stripeClient.products.update(id, {
       active: false
     })
     // await stripe.products.del(id)
   }
 
   async createPaymentLink(id: string) {
-    const product = await stripe.products.retrieve(id)
-    const { url } = await stripe.paymentLinks.create({
+    const product = await this.stripeClient.products.retrieve(id)
+    const { url } = await this.stripeClient.paymentLinks.create({
       line_items: [
         {
-          price: (product.default_price as Stripe.Price).id,
+          price: (product.default_price as StripeClient.Price).id,
           quantity: 1
         }
       ]
