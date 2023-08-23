@@ -174,4 +174,15 @@ export class RealStateService {
     await this.stripeService.deleteProduct(id)
     return realState
   }
+
+  async updateLessorId(realStateId: string, lessorId: string) {
+    this.prismaService.realState.update({
+      where: {
+        id: realStateId
+      },
+      data: {
+        lessorId: lessorId !== '' ? lessorId : null
+      }
+    })
+  }
 }

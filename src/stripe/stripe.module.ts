@@ -3,8 +3,7 @@ import { StripeService } from './stripe.service'
 import StripeClient from 'stripe'
 
 @Module({
-  providers: [StripeService],
-  exports: [
+  providers: [
     StripeService,
     {
       provide: StripeClient,
@@ -12,6 +11,7 @@ import StripeClient from 'stripe'
         apiVersion: '2022-11-15'
       })
     }
-  ]
+  ],
+  exports: [StripeService]
 })
 export class StripeModule {}

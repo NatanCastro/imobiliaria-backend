@@ -16,6 +16,7 @@ import { CreateRealStateDto } from './dto/create-real-state.dto'
 import { UpdateRealStateDto } from './dto/update-real-state.dto'
 import { FindRealState } from './dto/find-real-state.dto'
 import { FilesInterceptor } from '@nestjs/platform-express'
+import { warn } from 'console'
 
 @Controller('real-state')
 export class RealStateController {
@@ -112,6 +113,11 @@ export class RealStateController {
   @Patch(':id')
   update(@Param('id', new ParseUUIDPipe()) id: string, @Body() updateRealStateDto: UpdateRealStateDto) {
     return this.realStateService.update(id, updateRealStateDto)
+  }
+
+  @Patch(':id/update-lessor')
+  updateLessor(@Param('id', new ParseUUIDPipe()) id: string, updateLessorDto: { lessorId: string }) {
+    return this.realStateService.updateLessorId(id, updateLessorDto.lessorId)
   }
 
   @Delete(':id')
