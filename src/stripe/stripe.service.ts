@@ -3,7 +3,12 @@ import StripeClient from 'stripe'
 
 @Injectable()
 export class StripeService {
-  constructor(private readonly stripeClient: StripeClient) {}
+  stripeClient: StripeClient
+  constructor() {
+    this.stripeClient = new StripeClient(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: '2023-08-16'
+    })
+  }
 
   async addProduct({ id, name, price, images }: { id: string; name: string; price: number; images: string[] }) {
     const stripeProduct = await this.stripeClient.products.create({
