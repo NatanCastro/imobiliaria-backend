@@ -54,4 +54,7 @@ export class UpdateRealStateDto extends PartialType(CreateRealStateDto) {
   condominium: boolean
   @Type(() => Boolean)
   swimmingpool: boolean
+  @IsOptional()
+  @IsString()
+  lessorId: string
 }

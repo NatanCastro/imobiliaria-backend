@@ -148,7 +148,10 @@ export class RealStateService {
   async update(id: string, updateRealStateDto: UpdateRealStateDto) {
     const realState = await this.prismaService.realState.update({
       where: { id },
-      data: { ...updateRealStateDto },
+      data: {
+        ...updateRealStateDto,
+        lessorId: updateRealStateDto.lessorId !== '' ? updateRealStateDto.lessorId : null
+      },
       include: {
         Image: {
           select: {
@@ -173,16 +176,5 @@ export class RealStateService {
     realState.Image.forEach((i) => this.cloudinaryService.deleteFromCloudinary(i.cloudId))
     await this.stripeService.deleteProduct(id)
     return realState
-  }
-
-  async updateLessorId(realStateId: string, lessorId: string) {
-    this.prismaService.realState.update({
-      where: {
-        id: realStateId
-      },
-      data: {
-        lessorId: lessorId !== '' ? lessorId : null
-      }
-    })
   }
 }

@@ -114,11 +114,6 @@ export class RealStateController {
     return this.realStateService.update(id, updateRealStateDto)
   }
 
-  @Patch(':id/update-lessor')
-  updateLessor(@Param('id', new ParseUUIDPipe()) id: string, updateLessorDto: { lessorId: string }) {
-    return this.realStateService.updateLessorId(id, updateLessorDto.lessorId)
-  }
-
   @Delete(':id')
   remove(@Param('id', new ParseUUIDPipe()) id: string) {
     return this.realStateService.remove(id)
