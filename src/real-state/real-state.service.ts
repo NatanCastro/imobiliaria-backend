@@ -4,12 +4,14 @@ import { UpdateRealStateDto } from './dto/update-real-state.dto'
 import { PrismaService } from 'src/prisma/prisma.service'
 import { Prisma } from '@prisma/client'
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service'
+import { StripeService } from 'src/stripe/stripe.service'
 
 @Injectable()
 export class RealStateService {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly cloudinaryService: CloudinaryService
+    private readonly cloudinaryService: CloudinaryService,
+    private readonly stripeService: StripeService
   ) {}
 
   async create({
@@ -31,32 +33,60 @@ export class RealStateService {
     purchaseValue,
     images
   }: CreateRealStateDto) {
-    const realState = await this.prismaService.realState.create({
-      data: {
-        name,
-        description,
-        state,
-        city,
-        purchaseValue,
-        rentValue,
-        bedroomNumber,
-        district,
-        street,
-        number,
-        area,
-        bathroomNumber,
-        suiteNumber,
-        swimmingpool,
-        condominium,
-        parkingSpace,
-        Image: {
-          createMany: {
-            data: images
+    try {
+      const realState = await this.prismaService.realState.create({
+        data: {
+          name,
+          description,
+          state,
+          city,
+          purchaseValue,
+          rentValue,
+          bedroomNumber,
+          district,
+          street,
+          number,
+          area,
+          bathroomNumber,
+          suiteNumber,
+          swimmingpool,
+          condominium,
+          parkingSpace,
+          Image: {
+            createMany: {
+              data: images
+            }
+          }
+        },
+        include: {
+          Image: {
+            select: {
+              url: true
+            }
           }
         }
+      })
+      if (realState.rentValue) {
+        await this.stripeService.addProduct({
+          id: realState.id,
+          name: realState.name,
+          price: realState.rentValue,
+          images: realState.Image.map((image) => image.url)
+        })
+        const rentUrl = await this.stripeService.createPaymentLink(realState.id)
+        this.prismaService.realState.update({
+          where: {
+            id: realState.id
+          },
+          data: {
+            rentUrl
+          }
+        })
       }
-    })
-    return realState
+      return realState
+    } catch (e: any) {
+      console.log(e)
+    }
   }
 
   async uploadImages(files: Express.Multer.File[]) {
@@ -120,7 +150,25 @@ export class RealStateService {
   }
 
   async update(id: string, updateRealStateDto: UpdateRealStateDto) {
-    const realState = await this.prismaService.realState.update({ where: { id }, data: { ...updateRealStateDto } })
+    const realState = await this.prismaService.realState.update({
+      where: { id },
+      data: {
+        ...updateRealStateDto,
+        lessorId: updateRealStateDto.lessorId !== '' ? updateRealStateDto.lessorId : null
+      },
+      include: {
+        Image: {
+          select: {
+            url: true
+          }
+        }
+      }
+    })
+    this.stripeService.updateProduct(id, {
+      name: realState.name,
+      images: realState.Image.map((image) => image.url),
+      price: realState.rentValue
+    })
     return realState
   }
 
@@ -130,6 +178,7 @@ export class RealStateService {
       include: { Image: { select: { cloudId: true } } }
     })
     realState.Image.forEach((i) => this.cloudinaryService.deleteFromCloudinary(i.cloudId))
+    await this.stripeService.deleteProduct(id)
     return realState
   }
 }

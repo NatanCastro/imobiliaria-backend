@@ -8,4 +8,12 @@ export class UserService {
   updateUserRole(userId: string, role: string) {
     return this.clerkService.updateUserRole(userId, role)
   }
+
+  async getUsers() {
+    return this.clerkService.getUsers()
+  }
+
+  async getUser({ id }: { id: string }) {
+    return this.clerkService.getUser(id)
+  }
 }

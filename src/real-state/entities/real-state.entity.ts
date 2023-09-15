@@ -17,5 +17,7 @@ export class RealState implements PrismaRealState {
   purchaseValue: number
   swimmingpool: boolean
   condominium: boolean
+  rentUrl: string
+  lessorId: string
   id: string
 }
