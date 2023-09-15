@@ -33,56 +33,60 @@ export class RealStateService {
     purchaseValue,
     images
   }: CreateRealStateDto) {
-    const realState = await this.prismaService.realState.create({
-      data: {
-        name,
-        description,
-        state,
-        city,
-        purchaseValue,
-        rentValue,
-        bedroomNumber,
-        district,
-        street,
-        number,
-        area,
-        bathroomNumber,
-        suiteNumber,
-        swimmingpool,
-        condominium,
-        parkingSpace,
-        Image: {
-          createMany: {
-            data: images
-          }
-        }
-      },
-      include: {
-        Image: {
-          select: {
-            url: true
-          }
-        }
-      }
-    })
-    if (realState.rentValue) {
-      await this.stripeService.addProduct({
-        id: realState.id,
-        name: realState.name,
-        price: realState.rentValue,
-        images: realState.Image.map((image) => image.url)
-      })
-      const rentUrl = await this.stripeService.createPaymentLink(realState.id)
-      this.prismaService.realState.update({
-        where: {
-          id: realState.id
-        },
+    try {
+      const realState = await this.prismaService.realState.create({
         data: {
-          rentUrl
+          name,
+          description,
+          state,
+          city,
+          purchaseValue,
+          rentValue,
+          bedroomNumber,
+          district,
+          street,
+          number,
+          area,
+          bathroomNumber,
+          suiteNumber,
+          swimmingpool,
+          condominium,
+          parkingSpace,
+          Image: {
+            createMany: {
+              data: images
+            }
+          }
+        },
+        include: {
+          Image: {
+            select: {
+              url: true
+            }
+          }
         }
       })
+      if (realState.rentValue) {
+        await this.stripeService.addProduct({
+          id: realState.id,
+          name: realState.name,
+          price: realState.rentValue,
+          images: realState.Image.map((image) => image.url)
+        })
+        const rentUrl = await this.stripeService.createPaymentLink(realState.id)
+        this.prismaService.realState.update({
+          where: {
+            id: realState.id
+          },
+          data: {
+            rentUrl
+          }
+        })
+      }
+      return realState
+    } catch (e: any) {
+      console.log(e)
     }
-    return realState
   }
 
   async uploadImages(files: Express.Multer.File[]) {

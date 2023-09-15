@@ -46,10 +46,11 @@ export class StripeService {
 
   async createPaymentLink(id: string) {
     const product = await this.stripeClient.products.retrieve(id)
+    console.log(product)
     const { url } = await this.stripeClient.paymentLinks.create({
       line_items: [
         {
-          price: (product.default_price as StripeClient.Price).id,
+          price: product.default_price as string,
           quantity: 1
         }
       ]

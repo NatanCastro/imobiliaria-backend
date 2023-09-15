@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Query } from '@nestjs/common'
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post } from '@nestjs/common'
 import { ChangeRoleDto } from './dto/change-role.dto'
 import { UserService } from './user.service'
 
@@ -7,13 +7,13 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  getUsers(@Query('id') id: string) {
-    return this.userService.getUsers({ id })
+  getUsers() {
+    return this.userService.getUsers()
   }
 
   @Get(':id')
-  getUser(@Query('id') id: string, @Param('userId') userId: string) {
-    return this.userService.getUser({ id, userId })
+  getUser(@Param('id') id: string) {
+    return this.userService.getUser({ id })
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
