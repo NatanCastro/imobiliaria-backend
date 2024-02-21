@@ -5,14 +5,16 @@ import { PrismaService } from 'src/prisma/prisma.service'
 import { Prisma } from '@prisma/client'
 import { CloudinaryService } from 'src/cloudinary/cloudinary.service'
 import { StripeService } from 'src/stripe/stripe.service'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 
 @Injectable()
 export class RealStateService {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly cloudinaryService: CloudinaryService,
-    private readonly stripeService: StripeService
-  ) {}
+    private readonly stripeService: StripeService,
+    private readonly eventEmitter: EventEmitter2
+  ) { }
 
   async create({
     state,
@@ -33,60 +35,45 @@ export class RealStateService {
     purchaseValue,
     images
   }: CreateRealStateDto) {
-    try {
-      const realState = await this.prismaService.realState.create({
-        data: {
-          name,
-          description,
-          state,
-          city,
-          purchaseValue,
-          rentValue,
-          bedroomNumber,
-          district,
-          street,
-          number,
-          area,
-          bathroomNumber,
-          suiteNumber,
-          swimmingpool,
-          condominium,
-          parkingSpace,
-          Image: {
-            createMany: {
-              data: images
-            }
-          }
-        },
-        include: {
-          Image: {
-            select: {
-              url: true
-            }
+    const realState = await this.prismaService.realState.create({
+      data: {
+        name,
+        description,
+        state,
+        city,
+        purchaseValue,
+        rentValue,
+        bedroomNumber,
+        district,
+        street,
+        number,
+        area,
+        bathroomNumber,
+        suiteNumber,
+        swimmingpool,
+        condominium,
+        parkingSpace,
+        Image: {
+          createMany: {
+            data: images
           }
         }
-      })
-      if (realState.rentValue) {
-        await this.stripeService.addProduct({
-          id: realState.id,
-          name: realState.name,
-          price: realState.rentValue,
-          images: realState.Image.map((image) => image.url)
-        })
-        const rentUrl = await this.stripeService.createPaymentLink(realState.id)
-        this.prismaService.realState.update({
-          where: {
-            id: realState.id
-          },
-          data: {
-            rentUrl
+      },
+      include: {
+        Image: {
+          select: {
+            url: true
           }
-        })
+        }
       }
-      return realState
-    } catch (e: any) {
-      console.log(e)
-    }
+    })
+    if (!realState.rentValue) return realState
+    this.eventEmitter.emit('realState.created', {
+      id: realState.id,
+      name: realState.name,
+      price: realState.rentValue,
+      images: realState.Image.map((image) => image.url)
+    })
   }
 
   async uploadImages(files: Express.Multer.File[]) {
@@ -154,7 +141,7 @@ export class RealStateService {
       where: { id },
       data: {
         ...updateRealStateDto,
-        lessorId: updateRealStateDto.lessorId !== '' ? updateRealStateDto.lessorId : null
+        lessorId: updateRealStateDto.lessorId || null
       },
       include: {
         Image: {

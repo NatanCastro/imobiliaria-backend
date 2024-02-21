@@ -46,7 +46,6 @@ export class StripeService {
 
   async createPaymentLink(id: string) {
     const product = await this.stripeClient.products.retrieve(id)
-    console.log(product)
     const { url } = await this.stripeClient.paymentLinks.create({
       line_items: [
         {

@@ -7,9 +7,11 @@ import { ClerkModule } from './clerk/clerk.module'
 import { UserModule } from './user/user.module'
 import { StripeModule } from './stripe/stripe.module'
 import { AuthModule } from './auth/auth.module'
+import { EventEmitterModule } from '@nestjs/event-emitter'
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot({ global: true }),
     PrismaModule,
     RealStateModule,
     CloudinaryModule,
